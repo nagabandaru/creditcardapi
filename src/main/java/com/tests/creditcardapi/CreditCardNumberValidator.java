@@ -19,11 +19,30 @@ public class CreditCardNumberValidator implements
     public void initialize(CreditCardNumberConstrain creditCardNumber) {
         
     }
+    private boolean checkLuhn(String cardNo){
+        int digits = cardNo.length();
+
+        int sum = 0;
+        boolean isSecond = false;
+        for (int i = digits - 1; i >= 0; i--)
+        {
+
+            int d = cardNo.charAt(i) - '0';
+
+            if (isSecond == true)
+                d = d * 2;
+            sum += d / 10;
+            sum += d % 10;
+
+            isSecond = !isSecond;
+        }
+        return (sum % 10 == 0);
+    }
     @Override
     public boolean isValid(String cardNo,
             ConstraintValidatorContext cxt) {
         boolean isValid = cardNo != null && cardNo.matches("[0-9]+")
-          && (cardNo.length() > 1) && (cardNo.length() <= 19);
+          && (cardNo.length() > 1) && (cardNo.length() <= 19) && checkLuhn(cardNo);
         if(!isValid){
             ((ConstraintValidatorContextImpl)cxt).addMessageParameter("cardNo", cardNo);
             
